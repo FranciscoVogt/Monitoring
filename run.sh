@@ -26,7 +26,7 @@ sleep 10
 #nohup python3 files/TGEntries.py > log &
 
 #rate-show
-/$SDE/run_bfshell.sh -f files/view
+/$SDE/run_bfshell.sh -f view
 
 
 
