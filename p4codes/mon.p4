@@ -7,6 +7,7 @@ typedef bit<48> mac_addr_t;
 typedef bit<12> vlan_id_t;
 typedef bit<16> ether_type_t;
 typedef bit<32> ipv4_addr_t;
+typedef bit<32> reg_index_t;
 
 const ether_type_t ETHERTYPE_IPV4 = 16w0x0800;
 const ether_type_t ETHERTYPE_VLAN = 16w0x8100;
