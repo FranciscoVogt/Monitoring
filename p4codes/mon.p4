@@ -243,7 +243,7 @@ control SwitchEgress(
 	
 	
 		if(hdr.monitor.isValid()){
-			hdr.monitor.timestamp = eg_intr_from_prsr.global_tstamp;
+			hdr.monitor.timestamp = eg_intr_md_from_prsr.global_tstamp;
 			hdr.monitor.port = eg_intr_md.egress_port;
 			
 			byte_count.apply(hdr.monitor.bytes, eg_intr_md.pkt_length, (bit<32>)eg_intr_md.egress_port);
