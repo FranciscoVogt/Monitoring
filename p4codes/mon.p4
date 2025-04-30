@@ -45,6 +45,7 @@ header monitor_h {
 	bit<64> bytes;
 	bit<48> timestamp;
 	bit<9> port;
+	bit<7> padding;
 }
 
 struct headers {
