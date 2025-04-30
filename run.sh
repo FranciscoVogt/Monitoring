@@ -9,7 +9,7 @@ bf_kdrv_mod_load $SDE_INSTALL
 
 
 
-/$SDE/run_switchd.sh -p mon &
+/$SDE/run_switchd.sh -p p4codes/mon &
 
 sleep 30
 

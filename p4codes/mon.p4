@@ -1,5 +1,8 @@
 #include <tna.p4>
 
+#include "byteCount.p4"
+
+
 typedef bit<48> mac_addr_t;
 typedef bit<12> vlan_id_t;
 typedef bit<16> ether_type_t;
@@ -8,7 +11,7 @@ typedef bit<32> ipv4_addr_t;
 const ether_type_t ETHERTYPE_IPV4 = 16w0x0800;
 const ether_type_t ETHERTYPE_VLAN = 16w0x8100;
 
-
+const ether_type_t ETHERTYPE_MONITOR = 0x1234;
 
 header ethernet_h {
 	mac_addr_t dst_addr;
@@ -37,9 +40,16 @@ header ipv4_h {
 	ipv4_addr_t dst_addr;
 }
 
+header monitor_h {
+	bit<64> bytes;
+	bit<48> timestamp;
+	bit<9> port;
+}
+
 struct headers {
 	pktgen_timer_header_t timer;
 	ethernet_h	ethernet;
+	monitor_h	monitor;
 	vlan_tag_h	vlan_tag;
 	ipv4_h		ipv4;
 }
@@ -59,12 +69,27 @@ parser SwitchIngressParser(
 	out my_ingress_metadata_t ig_md,
 	out ingress_intrinsic_metadata_t ig_intr_md) {
 
-	state start {
+	/*state start {
 		packet.extract(ig_intr_md);
 		packet.advance(PORT_METADATA_SIZE);
 		
 		transition parse_ethernet;
+	}*/
+
+
+	state start {
+		packet.extract(ig_intr_md);
+		packet.advance(PORT_METADATA_SIZE);
+		
+		pktgen_timer_header_t pktgen_pd_hdr = packet.lookahead<pktgen_timer_header_t>();
+		transition select(pktgen_pd_hdr.app_id) {
+			1 : parse_pktgen_timer;
+			default : reject;
+		}	
 	}
+
+
+
 
 	state parse_pktgen_timer {
 		//packet.extract(hdr.timer);
@@ -74,7 +99,7 @@ parser SwitchIngressParser(
 
 	state parse_ethernet {
 		packet.extract(hdr.ethernet);
-		ig_md.ctrl = 2;
+		//ig_md.ctrl = 2;
 		transition select(hdr.ethernet.ether_type) {
 			ETHERTYPE_IPV4:  parse_ipv4;
 			ETHERTYPE_VLAN:  parse_vlan;
@@ -127,7 +152,19 @@ control SwitchIngress(
 		
 	apply {
 		
-		fwd.apply();
+		//fwd.apply();
+
+		if(ig_md.ctrl==2){
+			hdr.monitor.isValid();
+			hdr.ethernet.ethertype = ETHERTYPE_MONITOR;
+			ig_intr_tm_md.ucast_egress_port = 160;
+		}
+		
+		//need to adjust the parser still
+		/*if(ig_intr_md.ingress_port==196 || ig_intr_md.ingress_port==68){
+			hdr.monitor.isValid();
+			hdr.ethernet.ethertype = ETHERTYPE_MONITOR;
+		}*/
 		
 	}
 		
@@ -162,8 +199,15 @@ parser SwitchEgressParser(
 		transition select(hdr.ethernet.ether_type) {
 			ETHERTYPE_IPV4:  parse_ipv4;
 			ETHERTYPE_VLAN:  parse_vlan;
+			ETHERTYPE_MONITOR: parse_monitor;
 			default: accept;
 		}
+	}
+
+	state parse_monitor {
+		packet.extract(hdr.monitor);
+		transition accept;
+	
 	}
 
 	state parse_vlan {
@@ -188,9 +232,22 @@ control SwitchEgress(
 	in egress_intrinsic_metadata_from_parser_t eg_intr_md_from_prsr,
 	inout egress_intrinsic_metadata_for_deparser_t ig_intr_dprs_md,
 	inout egress_intrinsic_metadata_for_output_port_t eg_intr_oport_md) {
-		
+	
+
+	Add_64_64(4096) byte_count;
+
+
+	
 	apply {
-		
+	
+	
+		if(hdr.monitor.isValid()){
+			hdr.monitor.timestamp = eg_intr_from_prsr.global_tstamp;
+			hdr.monitor.port = eg_intr_md.egress_port;
+			
+			byte_count.apply(hdr.monitor.bytes, eg_intr_md.pkt_length, (bit<32>)eg_intr_md.egress_port);
+			
+		}
 	}
 }
 
