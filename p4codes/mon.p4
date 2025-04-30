@@ -243,11 +243,14 @@ control SwitchEgress(
 	apply {
 	
 	
+		bit<64> l_1 = 0;
+		l_1 = (bit<64>)(eg_intr_md.pkt_length);
+	
 		if(hdr.monitor.isValid()){
 			hdr.monitor.timestamp = eg_intr_md_from_prsr.global_tstamp;
 			hdr.monitor.port = eg_intr_md.egress_port;
 			
-			byte_count.apply(hdr.monitor.bytes, (bit<64>)eg_intr_md.pkt_length, (bit<32>)eg_intr_md.egress_port);
+			byte_count.apply(hdr.monitor.bytes, l_1, (bit<32>)eg_intr_md.egress_port);
 			
 		}
 	}
