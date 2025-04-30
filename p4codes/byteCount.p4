@@ -1,4 +1,5 @@
-#include "mon.p4"
+typedef bit<32> reg_index_t;
+
 
 control Add_64_64(
 	out bit<64> res,
