@@ -5,11 +5,11 @@ killall run_switchd
 
 bf_kdrv_mod_load $SDE_INSTALL
 
-/$SDE/../tools/p4_build.sh mon.p4
+/$SDE/../tools/p4_build.sh p4codes/mon.p4
 
 
 
-/$SDE/run_switchd.sh -p p4codes/mon &
+/$SDE/run_switchd.sh -p mon &
 
 sleep 30
 
@@ -18,7 +18,7 @@ sleep 30
 /$SDE/run_bfshell.sh -f portConfig 
 
 #Config Tables, Registers etc
-/$SDE/run_bfshell.sh -b controlPlane.py 
+#/$SDE/run_bfshell.sh -b controlPlane.py 
 
 sleep 10
 
