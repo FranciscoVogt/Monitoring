@@ -298,7 +298,11 @@ control SwitchEgress(
 			hdr.monitor.port = eg_intr_md.egress_port;
 			hdr.monitor.pktLen = eg_intr_md.pkt_length;
 			
-			byte_count_port.apply(hdr.monitor.bytes, l_1, (bit<32>)eg_intr_md.egress_port);
+			//byte_count_port.apply(hdr.monitor.bytes, l_1, (bit<32>)eg_intr_md.egress_port);
+			byte_count_port.apply(hdr.monitor.bytes, l_1, hdr.mon_inst.indexPort);
+
+			store_info_port.apply(READ, hdr.mon_inst.indexPort, qID, qDepth, qTime);
+
 			
 		}
 		//calculate the information
