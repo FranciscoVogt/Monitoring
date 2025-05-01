@@ -1,7 +1,7 @@
 
 const bit<32> READ_ONLY = 9999;
 
-control Store_info(
+/*control Store_info(
 	in bit<32> op,
 	in  reg_index_t idx,
 	in bit<32> qID,
@@ -11,7 +11,18 @@ control Store_info(
 	out bit<32> qDepth_out,
 	out bit<32> qTime_out)
 	(bit<32> reg_size)
+{*/
+
+control Store_info(
+	in bit<32> op,
+	in  reg_index_t idx,
+	inout bit<32> qID,
+	inout bit<32> qDepth,
+	inout bit<32> qTime)
+	(bit<32> reg_size)
 {
+
+
 
 
 	/* save the queueID that packet passes */
@@ -49,16 +60,19 @@ control Store_info(
 
 
 	action add_id(){
-		qID_out = get_id.execute(idx);	
+		//qID_out = get_id.execute(idx);
+		qID = get_id.execute(idx);	
 	}
 
 
 	action add_depth(){
-		qDepth_out = get_depth.execute(idx);	
+		//qDepth_out = get_depth.execute(idx);	
+		qDepth = get_depth.execute(idx);	
 	}
 	
 	action add_time(){
-		qTime_out = get_time.execute(idx);
+		//qTime_out = get_time.execute(idx);
+		qTime = get_time.execute(idx);
 	}
 
 	apply{

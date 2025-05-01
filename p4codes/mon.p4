@@ -312,7 +312,8 @@ control SwitchEgress(
 			byte_count_port.apply(hdr.monitor.bytes, l_1, hdr.mon_inst.index_port);
 
 			//store_info_port.apply(READ, hdr.mon_inst.index_port, qID, qDepth, qTime);
-			store_info_port.apply(READ, hdr.mon_inst.index_port, d1, d2, d3, hdr.monitor.qID_port, hdr.monitor.qDepth_port, hdr.monitor.qTime_port);
+			store_info_port.apply(READ, hdr.mon_inst.index_port, hdr.monitor.qID_port, hdr.monitor.qDepth_port, hdr.monitor.qTime_port);
+			//store_info_port.apply(READ, hdr.mon_inst.index_port, d1, d2, d3, hdr.monitor.qID_port, hdr.monitor.qDepth_port, hdr.monitor.qTime_port);
 
 
 			
@@ -335,8 +336,8 @@ control SwitchEgress(
 			qTime = (bit<32>)(eg_intr_md.enq_tstamp);
 			
 			
-			//store_info_port.apply(WRITE, portIndex, qID, qDepth, qTime);
-			store_info_port.apply(WRITE, portIndex, qID, qDepth, qTime, d1, d2, d3);
+			store_info_port.apply(WRITE, portIndex, qID, qDepth, qTime);
+			//store_info_port.apply(WRITE, portIndex, qID, qDepth, qTime, d1, d2, d3);
 		
 		}
 
