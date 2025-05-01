@@ -92,7 +92,7 @@ parser SwitchIngressParser(
 
 
 	state parse_pktgen_timer {
-		//packet.extract(hdr.timer);
+		packet.extract(hdr.timer);
 		ig_md.ctrl = 2;
 		transition parse_ethernet;
 	}
