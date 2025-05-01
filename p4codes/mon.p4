@@ -1,12 +1,18 @@
 #include <tna.p4>
 
 #include "byteCount.p4"
+#include "saveInfo.p4"
 
 
 typedef bit<48> mac_addr_t;
 typedef bit<12> vlan_id_t;
 typedef bit<16> ether_type_t;
 typedef bit<32> ipv4_addr_t;
+
+
+const bit<32> READ = 9999;
+const bit<32> WRITE = 1111;
+
 
 
 const ether_type_t ETHERTYPE_IPV4 = 16w0x0800;
@@ -41,6 +47,14 @@ header ipv4_h {
 	ipv4_addr_t dst_addr;
 }
 
+
+header monitor_inst_h {
+	 bit<32> index_flow; // index of the flow to collect the informations
+	 bit<32> index_port; // index of the port to collect the informations
+	 bit<9> port;		// port to forward the packet
+	 bit<7> padding;
+}
+
 header monitor_h {
 	bit<64> bytes;
 	bit<48> timestamp;
@@ -49,12 +63,15 @@ header monitor_h {
 	bit<16> pktLen;
 }
 
+
+
 struct headers {
-	pktgen_timer_header_t timer;
-	ethernet_h	ethernet;
-	monitor_h	monitor;
-	vlan_tag_h	vlan_tag;
-	ipv4_h		ipv4;
+	pktgen_timer_header_t 	timer;
+	ethernet_h				ethernet;
+	monitor_inst_h 			mon_inst;
+	monitor_h				monitor;
+	vlan_tag_h				vlan_tag;
+	ipv4_h					ipv4;
 }
 
 struct my_ingress_metadata_t {
@@ -110,7 +127,7 @@ parser SwitchIngressParser(
 	}
 	
 	state parse_monitor {
-	
+		packet.extract(hdr.mon_inst);
 		transition accept;
 	}
 
@@ -162,10 +179,12 @@ control SwitchIngress(
 		//fwd.apply();
 
 		if(ig_md.ctrl==2 || hdr.ethernet.ether_type == ETHERTYPE_MONITOR){
-			hdr.monitor.setValid();
-			hdr.monitor.bytes = 0;
-			hdr.ethernet.ether_type = ETHERTYPE_MONITOR;
+			//hdr.monitor.setValid();
+			//hdr.monitor.bytes = 0;
+			//hdr.ethernet.ether_type = ETHERTYPE_MONITOR;
 			ig_intr_tm_md.ucast_egress_port = 134;
+			ig_intr_tm_md.ucast_egress_port = hdr.mon_inst.port;
+			
 		}
 		
 		//need to adjust the parser still
@@ -213,7 +232,8 @@ parser SwitchEgressParser(
 	}
 
 	state parse_monitor {
-		packet.extract(hdr.monitor);
+		packet.extract(hdr.mon_inst);
+		packet.extract(hdr.monitor);	// I extract to use the empty size in the packet
 		transition accept;
 	
 	}
@@ -242,24 +262,71 @@ control SwitchEgress(
 	inout egress_intrinsic_metadata_for_output_port_t eg_intr_oport_md) {
 	
 
-	Add_64_64(4096) byte_count;
-
-
+	Add_64_64(4096) byte_count_port;
+	Add_64_64(4096) byte_count_flow;
 	
+	Store_info(4096) store_info_port;
+	Store_info(4096) store_info_flow;
+	
+
+	//hashing for flows
+	Hash<bit<12>>(HashAlgorithm_t.CRC32) hTableIndex;
+
+	bit<32> flowIndex;
+	bit<32> portIndex;
+
+	bit<32> qID;
+	bit<32> qDepth;
+	bit<32> qTime;
+
+
+
+	bit<64> dummy = 0;
+		
+	bit<32> wri
+
 	apply {
 	
 	
 		bit<64> l_1 = 0;
 		l_1 = (bit<64>)(eg_intr_md.pkt_length);
-	
+
+
+		//collect the information	
 		if(hdr.monitor.isValid()){
 			hdr.monitor.timestamp = eg_intr_md_from_prsr.global_tstamp;
 			hdr.monitor.port = eg_intr_md.egress_port;
 			hdr.monitor.pktLen = eg_intr_md.pkt_length;
 			
-			byte_count.apply(hdr.monitor.bytes, l_1, (bit<32>)eg_intr_md.egress_port);
+			byte_count_port.apply(hdr.monitor.bytes, l_1, (bit<32>)eg_intr_md.egress_port);
 			
 		}
+		//calculate the information
+		else{
+		
+			//take the indexes
+			flowIndex = hTableIndex.get({hdr.ethernet.src_addr, hdr.ethernet.dst_addr}); 
+			portIndex = (bit<32>)(eg_intr_md.egress_port);
+
+			//calculate bytes
+			//byte_count_port.apply(hdr.monitor.bytes, l_1, (bit<32>)eg_intr_md.egress_port);
+			byte_count_port.apply(dummy, l_1, portIndex);
+			byte_count_flow.apply(dummy, l_1, flowIndex);			
+
+			//save other informations
+			qID = (bit<32>)(eg_intr_md.egress_qid);
+			qDepth = (bit<32>)(eg_intr_md.deq_qdepth);
+			qTime = (bit<32>)(eg_intr_md.enq_tstamp);
+			
+			
+			store_info_port.apply(WRITE, portIndex, qID, qDepth, qTime);
+
+		
+		}
+
+
+
+
 	}
 }
 

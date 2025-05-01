@@ -1,0 +1,69 @@
+#include "byteCount.p4"
+
+const bit<32> READ_ONLY = 9999;
+
+control Store_info(
+	in bit<32> op,
+	in  reg_index_t idx,
+	inout bit<32> qID,
+	inout bit<32> qDepth,
+	inout bit<32> qTime)
+	(bit<32> reg_size)
+{
+
+
+	/* save the queueID that packet passes */
+	Register<bit<32>, reg_index_t>(reg_size) reg_queueID;
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_lo) get_id = {
+		void apply(inout bit<32> value, out bit<32> result) {
+			if(op!=READ_ONLY){			
+				value = qID;
+			}
+			result = value;
+		}
+	};
+
+	/* save the dequeue depth that packet passes */
+	Register<bit<32>, reg_index_t>(reg_size) reg_queueDepth;
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueDepth) get_depth = {
+		void apply(inout bit<32> value, out bit<32> result) {
+			if(op!=READ_ONLY){			
+				value = qDepth;
+			}
+			result = value;
+		}
+	};
+
+	/* save the queue time that packet passes */
+	Register<bit<32>, reg_index_t>(reg_size) reg_Time;
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_Time) get_time = {
+		void apply(inout bit<32> value, out bit<32> result) {
+			if(op!=READ_ONLY){			
+				value = qTime;
+			}
+			result = value;
+		}
+	};
+
+
+
+
+
+	apply{
+
+		
+		qID = get_id.execute(idx);	
+
+		qDepth = get_depth.execute(idx);
+
+		qTime = get_time.execute(idx);
+	
+	
+	}
+
+
+
+
+
+
+}
