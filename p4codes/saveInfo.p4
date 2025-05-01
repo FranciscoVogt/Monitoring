@@ -1,4 +1,3 @@
-#include "byteCount.p4"
 
 const bit<32> READ_ONLY = 9999;
 
