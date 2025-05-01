@@ -86,11 +86,9 @@ parser SwitchIngressParser(
 		pktgen_timer_header_t pktgen_pd_hdr = packet.lookahead<pktgen_timer_header_t>();
 		transition select(pktgen_pd_hdr.app_id) {
 			1 : parse_pktgen_timer;
-			default : reject;
+			default : parse_ethernet;
 		}	
 	}
-
-
 
 
 	state parse_pktgen_timer {
@@ -105,8 +103,14 @@ parser SwitchIngressParser(
 		transition select(hdr.ethernet.ether_type) {
 			ETHERTYPE_IPV4:  parse_ipv4;
 			ETHERTYPE_VLAN:  parse_vlan;
+			ETHERTYPE_MONITOR: parse_monitor;
 			default: accept;
 		}
+	}
+	
+	state parse_monitor {
+	
+		transition accept;
 	}
 
 	state parse_vlan {
@@ -156,7 +160,7 @@ control SwitchIngress(
 		
 		//fwd.apply();
 
-		if(ig_md.ctrl==2){
+		if(ig_md.ctrl==2 || hdr.ethernet.ether_type == ETHERTYPE_MONITOR){
 			hdr.monitor.setValid();
 			hdr.ethernet.ether_type = ETHERTYPE_MONITOR;
 			ig_intr_tm_md.ucast_egress_port = 134;
