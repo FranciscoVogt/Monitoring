@@ -49,7 +49,7 @@ buff_offset = 144  # generated packets payload will be taken from the offset in 
 
 # build expected generated packets
 print("Create packet")
-p = testutils.simple_ipv4ip_packet(pktlen=pktlen)
+p = testutils.simple_eth_packet(pktlen=pktlen)
 
 print("enable pktgen port")
 
