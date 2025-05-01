@@ -92,7 +92,7 @@ parser SwitchIngressParser(
 
 
 	state parse_pktgen_timer {
-		packet.extract(hdr.timer);
+		//packet.extract(hdr.timer);
 		ig_md.ctrl = 2;
 		transition parse_ethernet;
 	}
@@ -162,6 +162,7 @@ control SwitchIngress(
 
 		if(ig_md.ctrl==2 || hdr.ethernet.ether_type == ETHERTYPE_MONITOR){
 			hdr.monitor.setValid();
+			hdr.monitor.bytes = 0;
 			hdr.ethernet.ether_type = ETHERTYPE_MONITOR;
 			ig_intr_tm_md.ucast_egress_port = 134;
 		}
