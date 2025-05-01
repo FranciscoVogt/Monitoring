@@ -157,7 +157,7 @@ control SwitchIngress(
 		//fwd.apply();
 
 		if(ig_md.ctrl==2){
-			hdr.monitor.isValid();
+			hdr.monitor.setValid();
 			hdr.ethernet.ether_type = ETHERTYPE_MONITOR;
 			ig_intr_tm_md.ucast_egress_port = 134;
 		}
