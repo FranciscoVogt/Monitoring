@@ -305,7 +305,7 @@ control SwitchEgress(
 		else{
 		
 			//take the indexes
-			flowIndex = hTableIndex.get({hdr.ethernet.src_addr, hdr.ethernet.dst_addr}); 
+			flowIndex = (bit<32>)(hTableIndex.get({hdr.ethernet.src_addr, hdr.ethernet.dst_addr})); 
 			portIndex = (bit<32>)(eg_intr_md.egress_port);
 
 			//calculate bytes
