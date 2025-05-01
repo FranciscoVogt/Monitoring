@@ -48,17 +48,27 @@ control Store_info(
 	};
 
 
+	action add_id(){
+		qID_out = get_id.execute(idx);	
+	}
 
 
+	action add_depth(){
+		qDepth_out = get_depth.execute(idx);	
+	}
+	
+	action add_time(){
+		qTime_out = get_time.execute(idx);
+	}
 
 	apply{
 
 		
-		qID_out = get_id.execute(idx);	
-
-		qDepth_out = get_depth.execute(idx);
-
-		qTime_out = get_time.execute(idx);
+		add_id();
+		
+		add_depth();
+		
+		add_time();
 	
 	
 	}
