@@ -13,7 +13,7 @@ control Store_info(
 
 	/* save the queueID that packet passes */
 	Register<bit<32>, reg_index_t>(reg_size) reg_queueID;
-	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_lo) get_id = {
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueID) get_id = {
 		void apply(inout bit<32> value, out bit<32> result) {
 			if(op!=READ_ONLY){			
 				value = qID;
