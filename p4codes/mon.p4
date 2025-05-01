@@ -13,7 +13,7 @@ typedef bit<32> ipv4_addr_t;
 const bit<32> READ = 9999;
 const bit<32> WRITE = 1111;
 
-
+const bit<32> TRASH = 0000;
 
 const ether_type_t ETHERTYPE_IPV4 = 16w0x0800;
 const ether_type_t ETHERTYPE_VLAN = 16w0x8100;
@@ -61,6 +61,12 @@ header monitor_h {
 	bit<9> port;
 	bit<7> padding;
 	bit<16> pktLen;
+
+
+	bit<32> qID_port;
+	bit<32> qDepth_port;
+	bit<32> qTime_port;
+
 }
 
 
@@ -285,6 +291,10 @@ control SwitchEgress(
 		
 	//bit<32> wri
 
+	bit<32> d1=0;
+	bit<32> d2=0;
+	bit<32> d3=0;
+
 	apply {
 	
 	
@@ -301,7 +311,9 @@ control SwitchEgress(
 			//byte_count_port.apply(hdr.monitor.bytes, l_1, (bit<32>)eg_intr_md.egress_port);
 			byte_count_port.apply(hdr.monitor.bytes, l_1, hdr.mon_inst.index_port);
 
-			store_info_port.apply(READ, hdr.mon_inst.index_port, qID, qDepth, qTime);
+			//store_info_port.apply(READ, hdr.mon_inst.index_port, qID, qDepth, qTime);
+			store_info_port.apply(READ, hdr.mon_inst.index_port, d1, d2, d3, hdr.monitor.qID_port, hdr.monitor.qDepth_port, hdr.monitor.qTime_port);
+
 
 			
 		}
@@ -323,8 +335,8 @@ control SwitchEgress(
 			qTime = (bit<32>)(eg_intr_md.enq_tstamp);
 			
 			
-			store_info_port.apply(WRITE, portIndex, qID, qDepth, qTime);
-
+			//store_info_port.apply(WRITE, portIndex, qID, qDepth, qTime);
+			store_info_port.apply(WRITE, portIndex, qID, qDepth, qTime, d1, d2, d3);
 		
 		}
 

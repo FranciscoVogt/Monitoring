@@ -4,9 +4,12 @@ const bit<32> READ_ONLY = 9999;
 control Store_info(
 	in bit<32> op,
 	in  reg_index_t idx,
-	inout bit<32> qID,
-	inout bit<32> qDepth,
-	inout bit<32> qTime)
+	in bit<32> qID,
+	in bit<32> qDepth,
+	in bit<32> qTime,
+	out bit<32> qID_out,
+	out bit<32> qDepth_out,
+	out bit<32> qTime_out)
 	(bit<32> reg_size)
 {
 
@@ -51,11 +54,11 @@ control Store_info(
 	apply{
 
 		
-		qID = get_id.execute(idx);	
+		qID_out = get_id.execute(idx);	
 
-		qDepth = get_depth.execute(idx);
+		qDepth_out = get_depth.execute(idx);
 
-		qTime = get_time.execute(idx);
+		qTime_out = get_time.execute(idx);
 	
 	
 	}
