@@ -71,15 +71,15 @@ parser SwitchIngressParser(
 	out my_ingress_metadata_t ig_md,
 	out ingress_intrinsic_metadata_t ig_intr_md) {
 
-	/*state start {
+	state start {
 		packet.extract(ig_intr_md);
 		packet.advance(PORT_METADATA_SIZE);
 		
 		transition parse_ethernet;
-	}*/
+	}
 
 
-	state start {
+	/*state start {
 		packet.extract(ig_intr_md);
 		packet.advance(PORT_METADATA_SIZE);
 		
@@ -88,7 +88,7 @@ parser SwitchIngressParser(
 			1 : parse_pktgen_timer;
 			default : parse_ethernet;
 		}	
-	}
+	}*/
 
 
 	state parse_pktgen_timer {
