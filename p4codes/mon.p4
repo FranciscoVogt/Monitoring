@@ -46,6 +46,7 @@ header monitor_h {
 	bit<48> timestamp;
 	bit<9> port;
 	bit<7> padding;
+	bit<16> pktLen;
 }
 
 struct headers {
@@ -254,6 +255,7 @@ control SwitchEgress(
 		if(hdr.monitor.isValid()){
 			hdr.monitor.timestamp = eg_intr_md_from_prsr.global_tstamp;
 			hdr.monitor.port = eg_intr_md.egress_port;
+			hdr.monitor.pktLen = eg_intr_md.pkt_length;
 			
 			byte_count.apply(hdr.monitor.bytes, l_1, (bit<32>)eg_intr_md.egress_port);
 			
