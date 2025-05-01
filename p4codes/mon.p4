@@ -283,7 +283,7 @@ control SwitchEgress(
 
 	bit<64> dummy = 0;
 		
-	bit<32> wri
+	//bit<32> wri
 
 	apply {
 	
