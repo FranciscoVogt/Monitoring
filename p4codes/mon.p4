@@ -159,7 +159,7 @@ control SwitchIngress(
 		if(ig_md.ctrl==2){
 			hdr.monitor.isValid();
 			hdr.ethernet.ether_type = ETHERTYPE_MONITOR;
-			ig_intr_tm_md.ucast_egress_port = 132;
+			ig_intr_tm_md.ucast_egress_port = 134;
 		}
 		
 		//need to adjust the parser still
