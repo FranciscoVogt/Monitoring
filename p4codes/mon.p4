@@ -56,7 +56,8 @@ header monitor_inst_h {
 }
 
 header monitor_h {
-	bit<64> bytes;
+	bit<64> bytes_flow;
+	bit<64> bytes_port
 	bit<48> timestamp;
 	bit<9> port;
 	bit<7> padding;
@@ -66,6 +67,11 @@ header monitor_h {
 	bit<32> qID_port;
 	bit<32> qDepth_port;
 	bit<32> qTime_port;
+
+
+	bit<32> qID_flow;
+	bit<32> qDepth_flow;
+	bit<32> qTime_flow;
 
 }
 
@@ -309,13 +315,16 @@ control SwitchEgress(
 			hdr.monitor.pktLen = eg_intr_md.pkt_length;
 			
 			//byte_count_port.apply(hdr.monitor.bytes, l_1, (bit<32>)eg_intr_md.egress_port);
-			byte_count_port.apply(hdr.monitor.bytes, l_1, hdr.mon_inst.index_port);
+			byte_count_port.apply(hdr.monitor.bytes_port, l_1, hdr.mon_inst.index_port);
+			
+			byte_count_flow.apply(hdr.monitor.bytes_flow, l_1, hdr.mon_inst.index_flow);
 
 			//store_info_port.apply(READ, hdr.mon_inst.index_port, qID, qDepth, qTime);
 			store_info_port.apply(READ, hdr.mon_inst.index_port, hdr.monitor.qID_port, hdr.monitor.qDepth_port, hdr.monitor.qTime_port);
 			//store_info_port.apply(READ, hdr.mon_inst.index_port, d1, d2, d3, hdr.monitor.qID_port, hdr.monitor.qDepth_port, hdr.monitor.qTime_port);
 
-
+			//trying
+			store_info_flow.apply(READ, hdr.mon_inst.index_flow, hdr.monitor.qID_flow, hdr.monitor.qDepth_flow, hdr.monitor.qTime_flow);
 			
 		}
 		//calculate the information
@@ -338,6 +347,11 @@ control SwitchEgress(
 			
 			store_info_port.apply(WRITE, portIndex, qID, qDepth, qTime);
 			//store_info_port.apply(WRITE, portIndex, qID, qDepth, qTime, d1, d2, d3);
+
+
+			//trying
+			store_info_port.apply(WRITE, flowIndex, qID, qDepth, qTime);
+		
 		
 		}
 
