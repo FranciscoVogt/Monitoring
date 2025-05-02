@@ -87,18 +87,18 @@ control Store_info(
 		qTime = set_time.execute(idx);
 	}
 
-	action get_id(){
+	action got_id(){
 		//qID_out = get_id.execute(idx);
 		qID = get_id.execute(idx);	
 	}
 
 
-	action get_depth(){
+	action got_depth(){
 		//qDepth_out = get_depth.execute(idx);	
 		qDepth = get_depth.execute(idx);	
 	}
 	
-	action get_time(){
+	action got_time(){
 		//qTime_out = get_time.execute(idx);
 		qTime = get_time.execute(idx);
 	}
@@ -109,11 +109,11 @@ control Store_info(
 
 
 		if(op==READ_ONLY){
-			get_id();
+			got_id();
 		
-			get_depth();
+			got_depth();
 		
-			get_time();
+			got_time();
 
 		
 		}else{
