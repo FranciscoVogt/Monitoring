@@ -57,7 +57,7 @@ header monitor_inst_h {
 
 header monitor_h {
 	bit<64> bytes_flow;
-	bit<64> bytes_port
+	bit<64> bytes_port;
 	bit<48> timestamp;
 	bit<9> port;
 	bit<7> padding;
