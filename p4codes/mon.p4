@@ -306,6 +306,12 @@ control SwitchEgress(
 	
 		bit<64> l_1 = 0;
 		l_1 = (bit<64>)(eg_intr_md.pkt_length);
+		//take the indexes
+			flowIndex = (bit<32>)(hTableIndex.get({hdr.ethernet.src_addr, hdr.ethernet.dst_addr})); 
+			portIndex = (bit<32>)(eg_intr_md.egress_port);
+
+		
+		
 
 
 		//collect the information	
@@ -320,20 +326,19 @@ control SwitchEgress(
 			byte_count_flow.apply(hdr.monitor.bytes_flow, l_1, hdr.mon_inst.index_flow);
 
 			//store_info_port.apply(READ, hdr.mon_inst.index_port, qID, qDepth, qTime);
-			store_info_port.apply(READ, hdr.mon_inst.index_port, hdr.monitor.qID_port, hdr.monitor.qDepth_port, hdr.monitor.qTime_port);
+
+			//should be read
+			store_info_port.apply(WRITE, hdr.mon_inst.index_port, hdr.monitor.qID_port, hdr.monitor.qDepth_port, hdr.monitor.qTime_port);
 			//store_info_port.apply(READ, hdr.mon_inst.index_port, d1, d2, d3, hdr.monitor.qID_port, hdr.monitor.qDepth_port, hdr.monitor.qTime_port);
 
 			//trying
-			store_info_flow.apply(READ, hdr.mon_inst.index_flow, hdr.monitor.qID_flow, hdr.monitor.qDepth_flow, hdr.monitor.qTime_flow);
+			store_info_flow.apply(WRITE, hdr.mon_inst.index_flow, hdr.monitor.qID_flow, hdr.monitor.qDepth_flow, hdr.monitor.qTime_flow);
 			
 		}
 		//calculate the information
 		else{
 		
-			//take the indexes
-			flowIndex = (bit<32>)(hTableIndex.get({hdr.ethernet.src_addr, hdr.ethernet.dst_addr})); 
-			portIndex = (bit<32>)(eg_intr_md.egress_port);
-
+			
 			//calculate bytes
 			//byte_count_port.apply(hdr.monitor.bytes, l_1, (bit<32>)eg_intr_md.egress_port);
 			byte_count_port.apply(dummy, l_1, portIndex);
