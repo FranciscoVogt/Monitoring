@@ -108,6 +108,26 @@ control Store_info(
 	apply{
 
 
+		if(op!=READ_ONLY){
+		qID = set_id.execute(idx);	
+
+		//qDepth_out = get_depth.execute(idx);	
+		qDepth = set_depth.execute(idx);	
+
+		//qTime_out = get_time.execute(idx);
+		qTime = set_time.execute(idx);
+		}else{
+		//qID_out = get_id.execute(idx);
+		qID = get_id.execute(idx);	
+
+		//qDepth_out = get_depth.execute(idx);	
+		qDepth = get_depth.execute(idx);	
+
+		qTime = get_time.execute(idx);
+	}
+
+
+/*
 		if(op==READ_ONLY){
 			got_id();
 		
@@ -124,7 +144,7 @@ control Store_info(
 			add_time();
 		
 		
-		}
+		}*/
 		
 		
 	

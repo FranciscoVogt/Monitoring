@@ -321,9 +321,9 @@ control SwitchEgress(
 			hdr.monitor.pktLen = eg_intr_md.pkt_length;
 			
 			//byte_count_port.apply(hdr.monitor.bytes, l_1, (bit<32>)eg_intr_md.egress_port);
-			//byte_count_port.apply(hdr.monitor.bytes_port, l_1, hdr.mon_inst.index_port);
+			byte_count_port.apply(hdr.monitor.bytes_port, l_1, hdr.mon_inst.index_port);
 			
-			//byte_count_flow.apply(hdr.monitor.bytes_flow, l_1, hdr.mon_inst.index_flow);
+			byte_count_flow.apply(hdr.monitor.bytes_flow, l_1, hdr.mon_inst.index_flow);
 
 			//store_info_port.apply(READ, hdr.mon_inst.index_port, qID, qDepth, qTime);
 
@@ -341,8 +341,8 @@ control SwitchEgress(
 			
 			//calculate bytes
 			//byte_count_port.apply(hdr.monitor.bytes, l_1, (bit<32>)eg_intr_md.egress_port);
-			//byte_count_port.apply(dummy, l_1, portIndex);
-			//byte_count_flow.apply(dummy, l_1, flowIndex);			
+			byte_count_port.apply(dummy, l_1, portIndex);
+			byte_count_flow.apply(dummy, l_1, flowIndex);			
 
 			//save other informations
 			qID = (bit<32>)(eg_intr_md.egress_qid);
