@@ -307,7 +307,7 @@ control SwitchEgress(
 	//tentando
 
 	/* save the queueID that packet passes (flow saving) */
-	Register<bit<32>, reg_index_t>(reg_size) reg_queueID_flow;
+	Register<bit<32>, reg_index_t>(4096) reg_queueID_flow;
 	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueID_flow) write_id_flow = {
 		void apply(inout bit<32> value, out bit<32> result) {			
 			value = eg_md.qID;
@@ -321,7 +321,7 @@ control SwitchEgress(
 	};
 	
 	/* save the dequeue depth that packet passes (flow saving)*/
-	Register<bit<32>, reg_index_t>(reg_size) reg_queueDepth_flow;
+	Register<bit<32>, reg_index_t>(4096) reg_queueDepth_flow;
 	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueDepth_flow) write_depth_flow = {
 		void apply(inout bit<32> value, out bit<32> result) {		
 			value = eg_md.qDepth;
@@ -335,7 +335,7 @@ control SwitchEgress(
 	};
 	
 	/* save the queue time that packet passes (flow saving)*/
-	Register<bit<32>, reg_index_t>(reg_size) reg_Time_flow;
+	Register<bit<32>, reg_index_t>(4096) reg_Time_flow;
 	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_Time_flow) write_time_flow = {
 		void apply(inout bit<32> value, out bit<32> result) {		
 			value = eg_md.qTime;
@@ -351,7 +351,7 @@ control SwitchEgress(
 	//----------------------------------------------------------------------------------------
 
 	/* save the queueID that packet passes (port saving) */
-	Register<bit<32>, reg_index_t>(reg_size) reg_queueID_port;
+	Register<bit<32>, reg_index_t>(4096) reg_queueID_port;
 	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueID_port) write_id_port = {
 		void apply(inout bit<32> value, out bit<32> result) {			
 			value = eg_md.qID;
@@ -365,7 +365,7 @@ control SwitchEgress(
 	};
 	
 	/* save the dequeue depth that packet passes (port saving)*/
-	Register<bit<32>, reg_index_t>(reg_size) reg_queueDepth_port;
+	Register<bit<32>, reg_index_t>(4096) reg_queueDepth_port;
 	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueDepth_port) write_depth_port = {
 		void apply(inout bit<32> value, out bit<32> result) {		
 			value = eg_md.qDepth;
@@ -379,7 +379,7 @@ control SwitchEgress(
 	};
 	
 	/* save the queue time that packet passes (port saving)*/
-	Register<bit<32>, reg_index_t>(reg_size) reg_Time_port;
+	Register<bit<32>, reg_index_t>(4096) reg_Time_port;
 	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_Time_port) write_time_port = {
 		void apply(inout bit<32> value, out bit<32> result) {		
 			value = eg_md.qTime;
