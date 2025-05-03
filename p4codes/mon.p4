@@ -91,7 +91,9 @@ struct my_ingress_metadata_t {
 }
 
 struct my_egress_metadata_t {
-
+	bit<32> qID;
+	bit<32> qDepth;
+	bit<32> qTime;
 }
 
 
@@ -277,8 +279,8 @@ control SwitchEgress(
 	Add_64_64(4096) byte_count_port;
 	Add_64_64(4096) byte_count_flow;
 	
-	Store_info(4096) store_info_port;
-	Store_info(4096) store_info_flow;
+	//Store_info(4096) store_info_port;
+	//Store_info(4096) store_info_flow;
 	
 
 	//hashing for flows
@@ -300,6 +302,97 @@ control SwitchEgress(
 	bit<32> d1=0;
 	bit<32> d2=0;
 	bit<32> d3=0;
+
+
+	//tentando
+
+	/* save the queueID that packet passes (flow saving) */
+	Register<bit<32>, reg_index_t>(reg_size) reg_queueID_flow;
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueID_flow) write_id_flow = {
+		void apply(inout bit<32> value, out bit<32> result) {			
+			value = eg_md.qID;
+		}
+	};
+	
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueID_flow) read_id_flow = {
+		void apply(inout bit<32> value, out bit<32> result) {			
+			result = value;
+		}
+	};
+	
+	/* save the dequeue depth that packet passes (flow saving)*/
+	Register<bit<32>, reg_index_t>(reg_size) reg_queueDepth_flow;
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueDepth_flow) write_depth_flow = {
+		void apply(inout bit<32> value, out bit<32> result) {		
+			value = eg_md.qDepth;
+		}
+	};
+
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueDepth_flow) read_depth_flow = {
+		void apply(inout bit<32> value, out bit<32> result) {		
+			result = value;
+		}
+	};
+	
+	/* save the queue time that packet passes (flow saving)*/
+	Register<bit<32>, reg_index_t>(reg_size) reg_Time_flow;
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_Time_flow) write_time_flow = {
+		void apply(inout bit<32> value, out bit<32> result) {		
+			value = eg_md.qTime;
+		}
+	};
+
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_Time_flow) read_time_flow = {
+		void apply(inout bit<32> value, out bit<32> result) {		
+			result = value;
+		}
+	};
+	
+	//----------------------------------------------------------------------------------------
+
+	/* save the queueID that packet passes (port saving) */
+	Register<bit<32>, reg_index_t>(reg_size) reg_queueID_port;
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueID_port) write_id_port = {
+		void apply(inout bit<32> value, out bit<32> result) {			
+			value = eg_md.qID;
+		}
+	};
+	
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueID_port) read_id_port = {
+		void apply(inout bit<32> value, out bit<32> result) {			
+			result = value;
+		}
+	};
+	
+	/* save the dequeue depth that packet passes (port saving)*/
+	Register<bit<32>, reg_index_t>(reg_size) reg_queueDepth_port;
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueDepth_port) write_depth_port = {
+		void apply(inout bit<32> value, out bit<32> result) {		
+			value = eg_md.qDepth;
+		}
+	};
+
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueDepth_port) read_depth_port = {
+		void apply(inout bit<32> value, out bit<32> result) {		
+			result = value;
+		}
+	};
+	
+	/* save the queue time that packet passes (port saving)*/
+	Register<bit<32>, reg_index_t>(reg_size) reg_Time_port;
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_Time_port) write_time_port = {
+		void apply(inout bit<32> value, out bit<32> result) {		
+			value = eg_md.qTime;
+		}
+	};
+
+	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_Time_port) read_time_port = {
+		void apply(inout bit<32> value, out bit<32> result) {		
+			result = value;
+		}
+	};
+
+	//fim
 
 	apply {
 	
@@ -325,6 +418,17 @@ control SwitchEgress(
 			
 			byte_count_flow.apply(hdr.monitor.bytes_flow, l_1, hdr.mon_inst.index_flow);
 
+			//nova tentativa
+			hdr.monitor.qID_flow = read_id_flow.execute(hdr.mon_inst.index_flow);
+			hdr.monitor.qDepth_flow = read_depth_flow.execute(hdr.mon_inst.index_flow);
+			hdr.monitor.qTime_flow = read_time_flow.execute(hdr.mon_inst.index_flow);
+		
+			hdr.monitor.qID_port = read_time_port.execute(hdr.mon_inst.index_port);
+			hdr.monitor.qDepth_port =read_depth_port.execute(hdr.mon_inst.index_port);
+			hdr.monitor.qTime_port = read_time_port.execute(hdr.mon_inst.index_port);
+			//fim da nova tentativa
+
+			/*nao funcionou
 			//store_info_port.apply(READ, hdr.mon_inst.index_port, qID, qDepth, qTime);
 
 			//should be read
@@ -333,7 +437,7 @@ control SwitchEgress(
 
 			//trying
 			store_info_flow.apply(WRITE, hdr.mon_inst.index_flow, hdr.monitor.qID_flow, hdr.monitor.qDepth_flow, hdr.monitor.qTime_flow);
-			
+			*/
 		}
 		//calculate the information
 		else{
@@ -345,17 +449,28 @@ control SwitchEgress(
 			byte_count_flow.apply(dummy, l_1, flowIndex);			
 
 			//save other informations
-			qID = (bit<32>)(eg_intr_md.egress_qid);
-			qDepth = (bit<32>)(eg_intr_md.deq_qdepth);
-			qTime = (bit<32>)(eg_intr_md.enq_tstamp);
+			eg_md.qID = (bit<32>)(eg_intr_md.egress_qid);
+			eg_md.qDepth = (bit<32>)(eg_intr_md.deq_qdepth);
+			eg_md.qTime = (bit<32>)(eg_intr_md.enq_tstamp);
 			
 			
-			store_info_port.apply(WRITE, portIndex, qID, qDepth, qTime);
+			//nova tentativa
+			write_id_flow.execute(flowIndex);
+			write_depth_flow.execute(flowIndex);
+			write_time_flow.execute(flowIndex);
+	
+			write_time_port.execute(portIndex);
+			write_depth_port.execute(portIndex);
+			write_time_port.execute(portIndex);
+	
+			//fim da nova tentativa
+
+			//store_info_port.apply(WRITE, portIndex, qID, qDepth, qTime); //last
 			//store_info_port.apply(WRITE, portIndex, qID, qDepth, qTime, d1, d2, d3);
 
 
 			//trying
-			store_info_port.apply(WRITE, flowIndex, qID, qDepth, qTime);
+			//store_info_port.apply(WRITE, flowIndex, qID, qDepth, qTime);
 		
 		
 		}
