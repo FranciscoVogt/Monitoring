@@ -53,7 +53,7 @@ header monitor_inst_h {
 	 bit<32> index_port; // index of the port to collect the informations
 	 bit<9> port;		// port to forward the packet
 	 bit<7> padding;
-}
+}//10 bytes
 
 header monitor_h {
 	bit<64> bytes_flow;
@@ -73,7 +73,7 @@ header monitor_h {
 	bit<32> qDepth_flow;
 	bit<32> qTime_flow;
 
-}
+}// 50 bytes
 
 
 
@@ -406,14 +406,14 @@ control SwitchEgress(
 		bit<64> l_1 = 0;
 		l_1 = (bit<64>)(eg_intr_md.pkt_length);
 		//take the indexes
-			flowIndex = (bit<32>)(hTableIndex.get({hdr.ethernet.src_addr, hdr.ethernet.dst_addr})); 
-			portIndex = (bit<32>)(eg_intr_md.egress_port);
+			
 
 			eg_md.qID = (bit<32>)(eg_intr_md.egress_qid);
 			eg_md.qDepth = (bit<32>)(eg_intr_md.deq_qdepth);
 			eg_md.qTime = (bit<32>)(eg_intr_md.enq_tstamp);
 		
-
+		flowIndex = (bit<32>)(hTableIndex.get({hdr.ethernet.src_addr, hdr.ethernet.dst_addr})); 
+		portIndex = (bit<32>)(eg_intr_md.egress_port);
 
 		//collect the information	
 		if(hdr.monitor.isValid()){
