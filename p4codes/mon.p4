@@ -315,7 +315,8 @@ control SwitchEgress(
 	};
 	
 	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueID_flow) read_id_flow = {
-		void apply(inout bit<32> value, out bit<32> result) {			
+		void apply(inout bit<32> value, out bit<32> result) {
+			value = eg_md.qID; //comentar			
 			result = value;
 		}
 	};
@@ -329,7 +330,8 @@ control SwitchEgress(
 	};
 
 	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueDepth_flow) read_depth_flow = {
-		void apply(inout bit<32> value, out bit<32> result) {		
+		void apply(inout bit<32> value, out bit<32> result) {
+			value = eg_md.qDepth; //comentar		
 			result = value;
 		}
 	};
@@ -343,7 +345,8 @@ control SwitchEgress(
 	};
 
 	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_Time_flow) read_time_flow = {
-		void apply(inout bit<32> value, out bit<32> result) {		
+		void apply(inout bit<32> value, out bit<32> result) {
+			value = eg_md.qTime;//comentar		
 			result = value;
 		}
 	};
@@ -359,7 +362,8 @@ control SwitchEgress(
 	};
 	
 	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueID_port) read_id_port = {
-		void apply(inout bit<32> value, out bit<32> result) {			
+		void apply(inout bit<32> value, out bit<32> result) {
+			value = eg_md.qID;//comentar			
 			result = value;
 		}
 	};
@@ -373,7 +377,8 @@ control SwitchEgress(
 	};
 
 	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_queueDepth_port) read_depth_port = {
-		void apply(inout bit<32> value, out bit<32> result) {		
+		void apply(inout bit<32> value, out bit<32> result) {
+			value = eg_md.qDepth; //cmentar		
 			result = value;
 		}
 	};
@@ -387,7 +392,8 @@ control SwitchEgress(
 	};
 
 	RegisterAction<bit<32>, reg_index_t, bit<32>>(reg_Time_port) read_time_port = {
-		void apply(inout bit<32> value, out bit<32> result) {		
+		void apply(inout bit<32> value, out bit<32> result) {
+			value = eg_md.qTime; // comentar		
 			result = value;
 		}
 	};
@@ -403,7 +409,9 @@ control SwitchEgress(
 			flowIndex = (bit<32>)(hTableIndex.get({hdr.ethernet.src_addr, hdr.ethernet.dst_addr})); 
 			portIndex = (bit<32>)(eg_intr_md.egress_port);
 
-		
+			eg_md.qID = (bit<32>)(eg_intr_md.egress_qid);
+			eg_md.qDepth = (bit<32>)(eg_intr_md.deq_qdepth);
+			eg_md.qTime = (bit<32>)(eg_intr_md.enq_tstamp);
 		
 
 
@@ -448,11 +456,12 @@ control SwitchEgress(
 			byte_count_port.apply(dummy, l_1, portIndex);
 			byte_count_flow.apply(dummy, l_1, flowIndex);			
 
-			//save other informations
+			//save other informations (tava aqui)
+			/*
 			eg_md.qID = (bit<32>)(eg_intr_md.egress_qid);
 			eg_md.qDepth = (bit<32>)(eg_intr_md.deq_qdepth);
 			eg_md.qTime = (bit<32>)(eg_intr_md.enq_tstamp);
-			
+			*/
 			
 			//nova tentativa
 			write_id_flow.execute(flowIndex);
