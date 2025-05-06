@@ -431,7 +431,7 @@ control SwitchEgress(
 			hdr.monitor.qDepth_flow = read_depth_flow.execute(hdr.mon_inst.index_flow);
 			hdr.monitor.qTime_flow = read_time_flow.execute(hdr.mon_inst.index_flow);
 		
-			hdr.monitor.qID_port = read_time_port.execute(hdr.mon_inst.index_port);
+			hdr.monitor.qID_port = read_id_port.execute(hdr.mon_inst.index_port);
 			hdr.monitor.qDepth_port =read_depth_port.execute(hdr.mon_inst.index_port);
 			hdr.monitor.qTime_port = read_time_port.execute(hdr.mon_inst.index_port);
 			//fim da nova tentativa
