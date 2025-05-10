@@ -199,7 +199,7 @@ control SwitchIngress(
 			ig_intr_tm_md.ucast_egress_port = 134;
 			ig_intr_tm_md.ucast_egress_port = hdr.mon_inst.port;
 			
-		}
+		}else{ig_intr_tm_md.ucast_egress_port = 132;}
 		
 		//need to adjust the parser still
 		/*if(ig_intr_md.ingress_port==196 || ig_intr_md.ingress_port==68){
