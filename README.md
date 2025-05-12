@@ -44,6 +44,6 @@ after that, you can run our script that will compile the P4 code, configure the 
 ./run.sh
 ```
 
-After the switch starts, goes to the monitorin server and run the scripts as explained in [hostScripts](hostScrits/Readme.md)
+After the switch starts, goes to the monitoring server and run the scripts as explained in [hostScripts](hostScrits/Readme.md)
 
 
