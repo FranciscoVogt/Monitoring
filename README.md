@@ -10,7 +10,11 @@ Python3 and some libraries.
 tcpreplay.
 
 ## Pre-usage:
-Set the SDE bash at tofino, and prepare two terminals at a server connected directly to a tofino port.
+Prepare three terminals: one at Tofino, and two at the monitoring server (a server connected directly to the tofino)
+
+Clone the project at both environments.
+
+Set the SDE bash at tofino.
 
 
 ## Usage:
@@ -29,6 +33,6 @@ after that, you can run our script that will compile the P4 code, configure the 
 ./run.sh
 ```
 
-After the switch starts, goes to the monitorin server and run the scripts as expleined in [hostScripts](hostScrits/Readme.md)
+After the switch starts, goes to the monitorin server and run the scripts as explained in [hostScripts](hostScrits/Readme.md)
 
 
